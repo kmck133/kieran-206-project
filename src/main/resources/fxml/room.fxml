@@ -8,28 +8,43 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<Pane fx:id="room" focusTraversable="true" onKeyPressed="#onKeyPressed" onKeyReleased="#onKeyReleased" prefHeight="686.0" prefWidth="549.0" style="-fx-background-color: #A9A9A9;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nz.ac.auckland.se206.controllers.RoomController">
+<Pane fx:id="room" focusTraversable="true" onKeyPressed="#onKeyPressed" onKeyReleased="#onKeyReleased" prefHeight="623.0" prefWidth="664.0" style="-fx-background-color: #A9A9A9;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nz.ac.auckland.se206.controllers.RoomController">
    <children>
-      <ImageView fitHeight="550.0" fitWidth="568.0" layoutY="136.0" preserveRatio="true">
+      <ImageView fitHeight="488.0" fitWidth="689.0" layoutY="136.0" preserveRatio="true">
          <image>
             <Image url="@../images/store.png" />
          </image>
       </ImageView>
-      <Rectangle fx:id="rectCashier" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="73.0" layoutX="160.0" layoutY="403.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="38.0" />
-      <Rectangle fx:id="rectPerson1" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="128.0" layoutX="105.0" layoutY="291.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="109.0" />
-      <Rectangle fx:id="rectPerson2" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="107.0" layoutX="417.0" layoutY="458.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
-      <Label layoutX="36.0" layoutY="14.0" text="SOFTENG206 - Guess Who ?">
+      <ImageView fitHeight="84.0" fitWidth="80.0" layoutX="291.0" layoutY="241.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/cashier.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="285.0" fitWidth="131.0" layoutX="193.0" layoutY="305.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/grandma.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="226.0" fitWidth="109.0" layoutX="505.0" layoutY="363.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/kid.png" />
+         </image>
+      </ImageView>
+      <Rectangle fx:id="rectCashier" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="117.0" layoutX="214.0" layoutY="310.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
+      <Rectangle fx:id="rectPerson1" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="70.0" layoutX="295.0" layoutY="241.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
+      <Rectangle fx:id="rectPerson2" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="107.0" layoutX="512.0" layoutY="363.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
+      <Label layoutX="96.0" layoutY="14.0" text="SOFTENG206 - Guess Who ?">
          <font>
             <Font size="38.0" />
          </font>
       </Label>
-      <Button fx:id="btnGuess" layoutX="229.0" layoutY="93.0" mnemonicParsing="false" onAction="#handleGuessClick" text="Make a Guess" />
-      <Label layoutX="16.0" layoutY="59.0" text="Chat with the three customers, and guess who is the ">
+      <Button fx:id="btnGuess" layoutX="289.0" layoutY="99.0" mnemonicParsing="false" onAction="#handleGuessClick" text="Make a Guess" />
+      <Label layoutX="89.0" layoutY="60.0" text="Chat with the three customers, and guess who is the ">
          <font>
             <Font size="21.0" />
          </font>
       </Label>
-      <Label fx:id="lblProfession" layoutX="334.0" layoutY="87.0" prefHeight="37.0" prefWidth="208.0" wrapText="true">
+      <Label fx:id="lblProfession" layoutX="430.0" layoutY="87.0" prefHeight="37.0" prefWidth="208.0" wrapText="true">
          <font>
             <Font size="21.0" />
          </font>
