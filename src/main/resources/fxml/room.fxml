@@ -2,8 +2,11 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
@@ -30,6 +33,19 @@
             <Image url="@../images/kid.png" />
          </image>
       </ImageView>
+      <AnchorPane layoutY="136.0" prefHeight="107.0" prefWidth="664.0" visible="false">
+         <children>
+            <ImageView fx:id="talkerImage" fitHeight="107.0" fitWidth="107.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/headKid.png" />
+               </image>
+            </ImageView>
+            <TextArea fx:id="txtaChat" layoutX="107.0" opacity="0.9" prefHeight="107.0" prefWidth="557.0" text="Hello. My name is borgor. I do borgor things. Bubagub, gubabub. Hewo, is me Dino. I stole the text box hehehe. Fly fly fly. Tell Dina I said helo." wrapText="true" />
+            <TextField layoutX="4.0" layoutY="456.0" prefHeight="29.0" prefWidth="581.0" />
+            <Button fx:id="btnBack" layoutX="586.0" layoutY="114.0" minHeight="29.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="72.0" text="Go Back" />
+            <Button fx:id="btnSend" layoutX="588.0" layoutY="456.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="73.0" text="Send" />
+         </children>
+      </AnchorPane>
       <Rectangle fx:id="rectCashier" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="117.0" layoutX="214.0" layoutY="310.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
       <Rectangle fx:id="rectPerson1" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="70.0" layoutX="295.0" layoutY="241.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
       <Rectangle fx:id="rectPerson2" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="107.0" layoutX="512.0" layoutY="363.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
@@ -39,7 +55,7 @@
          </font>
       </Label>
       <Button fx:id="btnGuess" layoutX="289.0" layoutY="99.0" mnemonicParsing="false" onAction="#handleGuessClick" text="Make a Guess" />
-      <Label layoutX="89.0" layoutY="60.0" text="Chat with the three customers, and guess who is the ">
+      <Label layoutX="47.0" layoutY="62.0" text="Talk to the three suspects and figure out who stole the (thing)">
          <font>
             <Font size="21.0" />
          </font>
