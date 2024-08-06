@@ -210,4 +210,10 @@ public class RoomController {
         new Image(getClass().getResourceAsStream("/images/head" + characterName + ".png"));
     talkerImage.setImage(image);
   }
+
+  @FXML
+  public void closeChat() {
+    chatPane.setVisible(false);
+    txtaChat.clear();
+  }
 }
