@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import nz.ac.auckland.apiproxy.chat.openai.ChatCompletionRequest;
 import nz.ac.auckland.apiproxy.chat.openai.ChatCompletionResult;
@@ -29,14 +30,13 @@ import nz.ac.auckland.se206.speech.TextToSpeech;
  */
 public class RoomController {
 
+  @FXML private Rectangle rectKid;
+  @FXML private Rectangle rectGrandma;
   @FXML private Rectangle rectCashier;
-  @FXML private Rectangle rectPerson1;
-  @FXML private Rectangle rectPerson2;
-  @FXML private Rectangle rectPerson3;
-  @FXML private Rectangle rectWaitress;
   @FXML private Label lblProfession;
   @FXML private Button btnGuess;
 
+  @FXML private AnchorPane chatPane;
   @FXML private ImageView talkerImage;
   @FXML private TextArea txtaChat;
   @FXML private TextField txtInput;
@@ -47,7 +47,7 @@ public class RoomController {
   private String profession;
 
   private static boolean isFirstTimeInit = true;
-  private static GameStateContext context = new GameStateContext();
+  private GameStateContext context = new GameStateContext(this);
 
   /**
    * Initializes the room view. If it's the first time initialization, it will provide instructions
@@ -186,5 +186,17 @@ public class RoomController {
       e.printStackTrace();
       return null;
     }
+  }
+
+  /**
+   * Opens the chat view and sets the profession in the chat controller.
+   *
+   * @param event the mouse event that triggered the method
+   * @param profession the profession to set in the chat controller
+   * @throws IOException if the FXML file is not found
+   */
+  public void openChat(MouseEvent event, String profession) throws IOException {
+    setProfession(profession);
+    chatPane.setVisible(true);
   }
 }

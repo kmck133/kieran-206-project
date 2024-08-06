@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import javafx.scene.input.MouseEvent;
+import nz.ac.auckland.se206.controllers.RoomController;
 import nz.ac.auckland.se206.states.GameOver;
 import nz.ac.auckland.se206.states.GameStarted;
 import nz.ac.auckland.se206.states.GameState;
@@ -30,8 +31,8 @@ public class GameStateContext {
   private GameState gameState;
 
   /** Constructs a new GameStateContext and initializes the game states and professions. */
-  public GameStateContext() {
-    gameStartedState = new GameStarted(this);
+  public GameStateContext(RoomController roomController) {
+    gameStartedState = new GameStarted(this, roomController);
     guessingState = new Guessing(this);
     gameOverState = new GameOver(this);
 
@@ -60,9 +61,9 @@ public class GameStateContext {
 
     String[] randomProfessionsArray = randomProfessions.toArray(new String[3]);
     rectanglesToProfession = new HashMap<>();
-    rectanglesToProfession.put("rectPerson1", randomProfessionsArray[0]);
-    rectanglesToProfession.put("rectPerson2", randomProfessionsArray[1]);
-    rectanglesToProfession.put("rectPerson3", randomProfessionsArray[2]);
+    rectanglesToProfession.put("rectKid", randomProfessionsArray[0]);
+    rectanglesToProfession.put("rectGrandma", randomProfessionsArray[1]);
+    rectanglesToProfession.put("rectCashier", randomProfessionsArray[2]);
 
     int randomNumber = random.nextInt(3);
     rectIdToGuess =
