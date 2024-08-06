@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -139,7 +140,7 @@ public class RoomController {
               .setN(1)
               .setTemperature(0.2)
               .setTopP(0.5)
-              .setMaxTokens(100);
+              .setMaxTokens(2);
       runGpt(new ChatMessage("system", getSystemPrompt()));
     } catch (ApiProxyException e) {
       e.printStackTrace();
@@ -197,6 +198,16 @@ public class RoomController {
    */
   public void openChat(MouseEvent event, String profession) throws IOException {
     setProfession(profession);
+    setHeadImage(event);
     chatPane.setVisible(true);
+  }
+
+  public void setHeadImage(MouseEvent event) {
+    Rectangle rect = (Rectangle) event.getSource();
+    String id = rect.getId();
+    String characterName = id.replace("rect", "");
+    Image image =
+        new Image(getClass().getResourceAsStream("/images/head" + characterName + ".png"));
+    talkerImage.setImage(image);
   }
 }

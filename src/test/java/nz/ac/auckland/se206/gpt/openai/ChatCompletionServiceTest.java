@@ -29,7 +29,7 @@ public class ChatCompletionServiceTest {
     chatCompletionRequest.setN(1);
     chatCompletionRequest.setTemperature(1.5);
     chatCompletionRequest.setTopP(0.05);
-    chatCompletionRequest.setMaxTokens(100);
+    chatCompletionRequest.setMaxTokens(2);
     Set<String> results = new HashSet<>();
     try {
       ChatCompletionResult chatCompletionResult = chatCompletionRequest.execute();
