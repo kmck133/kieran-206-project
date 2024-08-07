@@ -3,6 +3,10 @@ package nz.ac.auckland.se206.controllers;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -16,6 +20,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import nz.ac.auckland.apiproxy.chat.openai.ChatCompletionRequest;
 import nz.ac.auckland.apiproxy.chat.openai.ChatCompletionResult;
 import nz.ac.auckland.apiproxy.chat.openai.ChatMessage;
@@ -47,6 +52,8 @@ public class RoomController {
 
   private ChatCompletionRequest chatCompletionRequest;
   private String profession;
+  private String currentCharacter;
+  private boolean animationFinished = false;
 
   private static boolean isFirstTimeInit = true;
   private GameStateContext context = new GameStateContext(this);
@@ -132,8 +139,39 @@ public class RoomController {
     }
     txtInput.clear();
     ChatMessage msg = new ChatMessage("user", message);
-    appendChatMessage(msg);
-    runGpt(msg);
+    Task<ChatMessage> gptTask =
+        new Task<ChatMessage>() {
+          @Override
+          protected ChatMessage call() throws Exception {
+            return runGpt(msg);
+          }
+        };
+
+    gptTask.setOnSucceeded(
+        event -> {
+          ChatMessage gptMsg = gptTask.getValue();
+
+          new Thread(
+                  () -> {
+                    while (!animationFinished) {
+                      try {
+                        Thread.sleep(50);
+                      } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                      }
+                    }
+                    Platform.runLater(() -> speakGpt(gptMsg));
+                  })
+              .start();
+        });
+
+    new Thread(gptTask).start();
+
+    Platform.runLater(
+        () -> {
+          animationFinished = false;
+          appendChatMessage(msg, "User");
+        });
   }
 
   /**
@@ -151,7 +189,8 @@ public class RoomController {
               .setTemperature(0.2)
               .setTopP(0.5)
               .setMaxTokens(2);
-      runGpt(new ChatMessage("system", getSystemPrompt()));
+      ChatMessage gptMsg = runGpt(new ChatMessage("system", getSystemPrompt()));
+      speakGpt(gptMsg);
     } catch (ApiProxyException e) {
       e.printStackTrace();
     }
@@ -173,8 +212,26 @@ public class RoomController {
    *
    * @param msg the chat message to append
    */
-  private void appendChatMessage(ChatMessage msg) {
-    txtaChat.appendText(msg.getRole() + ": " + msg.getContent() + "\n\n");
+  private void appendChatMessage(ChatMessage msg, String sender) {
+    txtaChat.appendText(sender + ": ");
+    final int[] index = {0};
+    Timeline timeline =
+        new Timeline(
+            new KeyFrame(
+                Duration.millis(100),
+                event -> {
+                  if (index[0] < msg.getContent().length()) {
+                    txtaChat.appendText(String.valueOf(msg.getContent().charAt(index[0])));
+                    index[0]++;
+                  }
+                }));
+    timeline.setCycleCount(msg.getContent().length());
+    timeline.setOnFinished(
+        event -> {
+          txtaChat.appendText("\n\n");
+          animationFinished = true;
+        });
+    timeline.play();
   }
 
   /**
@@ -190,13 +247,16 @@ public class RoomController {
       ChatCompletionResult chatCompletionResult = chatCompletionRequest.execute();
       Choice result = chatCompletionResult.getChoices().iterator().next();
       chatCompletionRequest.addMessage(result.getChatMessage());
-      appendChatMessage(result.getChatMessage());
-      TextToSpeech.speak(result.getChatMessage().getContent());
       return result.getChatMessage();
     } catch (ApiProxyException e) {
       e.printStackTrace();
       return null;
     }
+  }
+
+  private void speakGpt(ChatMessage msg) {
+    appendChatMessage(msg, currentCharacter);
+    TextToSpeech.speak(msg.getContent());
   }
 
   /**
@@ -216,6 +276,7 @@ public class RoomController {
     Rectangle rect = (Rectangle) event.getSource();
     String id = rect.getId();
     String characterName = id.replace("rect", "");
+    this.currentCharacter = characterName;
     Image image =
         new Image(getClass().getResourceAsStream("/images/head" + characterName + ".png"));
     talkerImage.setImage(image);
