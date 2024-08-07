@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -62,6 +63,15 @@ public class RoomController {
       isFirstTimeInit = false;
     }
     lblProfession.setText(context.getProfessionToGuess());
+    txtInput.setOnKeyPressed(
+        event -> {
+          if (event.getCode() == KeyCode.ENTER) {
+            try {
+              onSendMessage();
+            } catch (IOException | ApiProxyException e) {
+            }
+          }
+        });
   }
 
   /**
@@ -115,7 +125,7 @@ public class RoomController {
    * @throws IOException if there is an I/O error
    */
   @FXML
-  private void onSendMessage(ActionEvent event) throws ApiProxyException, IOException {
+  private void onSendMessage() throws ApiProxyException, IOException {
     String message = txtInput.getText().trim();
     if (message.isEmpty()) {
       return;
@@ -197,9 +207,9 @@ public class RoomController {
    * @throws IOException if the FXML file is not found
    */
   public void openChat(MouseEvent event, String profession) throws IOException {
-    setProfession(profession);
     setHeadImage(event);
     chatPane.setVisible(true);
+    setProfession(profession);
   }
 
   public void setHeadImage(MouseEvent event) {

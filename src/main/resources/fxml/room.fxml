@@ -33,7 +33,7 @@
             <Image url="@../images/kid.png" />
          </image>
       </ImageView>
-      <AnchorPane fx:id="chatPane" layoutY="136.0" prefHeight="107.0" prefWidth="664.0" visible="false">
+      <AnchorPane fx:id="chatPane" layoutY="136.0" prefHeight="107.0" prefWidth="664.0">
          <children>
             <ImageView fx:id="talkerImage" fitHeight="107.0" fitWidth="107.0" pickOnBounds="true" preserveRatio="true">
                <image>
