@@ -73,6 +73,10 @@ public class RoomController {
   private Thread timerThread;
   private boolean suspectTalkedTo = false;
 
+  private boolean firstKid = true;
+  private boolean firstGrandma = true;
+  private boolean firstCashier = true;
+
   private static boolean isFirstTimeInit = true;
   private GameStateContext context = new GameStateContext(this);
   private Media ranOutAudio =
@@ -82,6 +86,10 @@ public class RoomController {
   private Media talkToSuspectAudio =
       new Media(getClass().getResource("/sounds/talkToSuspectAudio.mp3").toString());
   private MediaPlayer talkToSuspectPlayer = new MediaPlayer(talkToSuspectAudio);
+
+  private Media tenSecondsAudio =
+      new Media(getClass().getResource("/sounds/tenSeconds.mp3").toString());
+  private MediaPlayer tenSecondsPlayer = new MediaPlayer(tenSecondsAudio);
 
   /**
    * Initializes the room view. If it's the first time initialization, it will provide instructions
@@ -153,6 +161,7 @@ public class RoomController {
     }
     stopTimer();
     timerRanOut = true;
+    tenSecondsPlayer.play();
     startCountdownTimer(11);
     context.handleGuessClick();
   }
@@ -217,6 +226,28 @@ public class RoomController {
    */
   public void setProfession(String profession) {
     this.profession = profession;
+
+    switch (currentCharacter) {
+      case "Kid":
+        if (!firstKid) {
+          return;
+        }
+        firstKid = false;
+        break;
+      case "Grandma":
+        if (!firstGrandma) {
+          return;
+        }
+        firstGrandma = false;
+        break;
+      case "Cashier":
+        if (!firstCashier) {
+          return;
+        }
+        firstCashier = false;
+        break;
+    }
+
     try {
       ApiProxyConfig config = ApiProxyConfig.readConfig();
       chatCompletionRequest =
@@ -278,6 +309,20 @@ public class RoomController {
    * @throws ApiProxyException if there is an error communicating with the API proxy
    */
   private ChatMessage runGpt(ChatMessage msg) throws ApiProxyException {
+    // Get the conversation history from the appropriate TextArea
+    String conversationHistory = currentArea.getText();
+
+    // Add conversation history to the GPT request
+    String[] lines = conversationHistory.split("\n\n");
+    for (String line : lines) {
+      if (line.startsWith("User: ")) {
+        chatCompletionRequest.addMessage(new ChatMessage("user", line.replace("User: ", "")));
+      } else if (line.startsWith(currentCharacter + ": ")) {
+        chatCompletionRequest.addMessage(
+            new ChatMessage("assistant", line.replace(currentCharacter + ": ", "")));
+      }
+    }
+
     chatCompletionRequest.addMessage(msg);
     try {
       ChatCompletionResult chatCompletionResult = chatCompletionRequest.execute();
@@ -306,6 +351,7 @@ public class RoomController {
    */
   public void openChat(MouseEvent event, String profession) throws IOException {
     setHeadImage(event);
+    setChatLog();
     chatPane.setVisible(true);
     setProfession(profession);
   }
