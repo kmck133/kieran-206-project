@@ -77,6 +77,8 @@ public class RoomController {
   private boolean firstGrandma = true;
   private boolean firstCashier = true;
 
+  private ChatMessage openMsg;
+
   private static boolean isFirstTimeInit = true;
   private GameStateContext context = new GameStateContext(this);
   private Media ranOutAudio =
@@ -159,6 +161,7 @@ public class RoomController {
       talkToSuspectPlayer.play();
       return;
     }
+    closeChat();
     stopTimer();
     timerRanOut = true;
     tenSecondsPlayer.play();
@@ -227,23 +230,18 @@ public class RoomController {
   public void setProfession(String profession) {
     this.profession = profession;
 
+    if (!firstTimeCheck(currentCharacter)) {
+      return;
+    }
+
     switch (currentCharacter) {
       case "Kid":
-        if (!firstKid) {
-          return;
-        }
         firstKid = false;
         break;
       case "Grandma":
-        if (!firstGrandma) {
-          return;
-        }
         firstGrandma = false;
         break;
       case "Cashier":
-        if (!firstCashier) {
-          return;
-        }
         firstCashier = false;
         break;
     }
@@ -256,8 +254,8 @@ public class RoomController {
               .setTemperature(0.2)
               .setTopP(0.5)
               .setMaxTokens(2);
-      ChatMessage gptMsg = runGpt(new ChatMessage("system", getSystemPrompt()));
-      speakGpt(gptMsg);
+      ChatMessage openMsg = runGpt(new ChatMessage("system", getSystemPrompt()));
+      this.openMsg = openMsg;
     } catch (ApiProxyException e) {
       e.printStackTrace();
     }
@@ -280,7 +278,9 @@ public class RoomController {
    * @param msg the chat message to append
    */
   private void appendChatMessage(ChatMessage msg, String sender) {
-    txtaChat.appendText(sender + ": ");
+    if (sender != "") {
+      txtaChat.appendText(sender + ": ");
+    }
     final int[] index = {0};
     Timeline timeline =
         new Timeline(
@@ -309,10 +309,9 @@ public class RoomController {
    * @throws ApiProxyException if there is an error communicating with the API proxy
    */
   private ChatMessage runGpt(ChatMessage msg) throws ApiProxyException {
-    // Get the conversation history from the appropriate TextArea
+
     String conversationHistory = currentArea.getText();
 
-    // Add conversation history to the GPT request
     String[] lines = conversationHistory.split("\n\n");
     for (String line : lines) {
       if (line.startsWith("User: ")) {
@@ -352,8 +351,56 @@ public class RoomController {
   public void openChat(MouseEvent event, String profession) throws IOException {
     setHeadImage(event);
     setChatLog();
-    chatPane.setVisible(true);
-    setProfession(profession);
+
+    if (firstTimeCheck(currentCharacter)) {
+      Task<Void> professionTask =
+          new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+              setProfession(profession);
+              return null;
+            }
+          };
+
+      professionTask.setOnSucceeded(
+          e -> {
+            new Thread(
+                    () -> {
+                      while (!animationFinished) {
+                        try {
+                          Thread.sleep(50);
+                        } catch (InterruptedException ex) {
+                          Thread.currentThread().interrupt();
+                        }
+                      }
+                      Platform.runLater(() -> speakGpt(openMsg));
+                    })
+                .start();
+          });
+
+      new Thread(professionTask).start();
+
+      Platform.runLater(
+          () -> {
+            animationFinished = false;
+            chatPane.setVisible(true);
+            switch (currentCharacter) {
+              case "Kid":
+                appendChatMessage(new ChatMessage("assistant", "kid filler text lol"), "");
+                break;
+              case "Grandma":
+                appendChatMessage(new ChatMessage("assistant", "grandma filler text lol"), "");
+                break;
+              case "Cashier":
+                appendChatMessage(new ChatMessage("assistant", "cashier filler text lol"), "");
+              default:
+                break;
+            }
+          });
+    } else {
+      chatPane.setVisible(true);
+      setProfession(profession);
+    }
   }
 
   public void setHeadImage(MouseEvent event) {
@@ -477,6 +524,19 @@ public class RoomController {
         break;
       default:
         break;
+    }
+  }
+
+  private boolean firstTimeCheck(String currentCharacter) {
+    switch (currentCharacter) {
+      case "Kid":
+        return firstKid;
+      case "Grandma":
+        return firstGrandma;
+      case "Cashier":
+        return firstCashier;
+      default:
+        return false;
     }
   }
 }
