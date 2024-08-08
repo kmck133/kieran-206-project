@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -50,9 +51,15 @@ public class RoomController {
   @FXML private Button btnSend;
   @FXML private Button btnBack;
 
+  @FXML private TitledPane chatLogPane;
+  @FXML private TextArea chatLogKid;
+  @FXML private TextArea chatLogCashier;
+  @FXML private TextArea chatLogGrandma;
+
   private ChatCompletionRequest chatCompletionRequest;
   private String profession;
   private String currentCharacter;
+  private TextArea currentArea;
   private boolean animationFinished = false;
 
   private static boolean isFirstTimeInit = true;
@@ -133,6 +140,7 @@ public class RoomController {
    */
   @FXML
   private void onSendMessage() throws ApiProxyException, IOException {
+    clearChat();
     String message = txtInput.getText().trim();
     if (message.isEmpty()) {
       return;
@@ -170,6 +178,8 @@ public class RoomController {
     Platform.runLater(
         () -> {
           animationFinished = false;
+          setChatLog();
+          currentArea.appendText("User: " + msg.getContent() + "\n\n");
           appendChatMessage(msg, "User");
         });
   }
@@ -255,6 +265,8 @@ public class RoomController {
   }
 
   private void speakGpt(ChatMessage msg) {
+    setChatLog();
+    currentArea.appendText(currentCharacter + ": " + msg.getContent() + "\n\n");
     appendChatMessage(msg, currentCharacter);
     TextToSpeech.speak(msg.getContent());
   }
@@ -285,6 +297,25 @@ public class RoomController {
   @FXML
   public void closeChat() {
     chatPane.setVisible(false);
+    clearChat();
+  }
+
+  public void clearChat() {
     txtaChat.clear();
+  }
+
+  private void setChatLog() {
+    switch (currentCharacter) {
+      case "Kid":
+        currentArea = chatLogKid;
+        break;
+      case "Cashier":
+        currentArea = chatLogCashier;
+        break;
+      case "Grandma":
+        currentArea = chatLogGrandma;
+      default:
+        break;
+    }
   }
 }

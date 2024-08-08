@@ -35,6 +35,7 @@ public class GameStarted implements GameState {
    */
   @Override
   public void handleRectangleClick(MouseEvent event, String rectangleId) throws IOException {
+    roomController.clearChat();
     roomController.openChat(event, context.getProfession(rectangleId));
   }
 
