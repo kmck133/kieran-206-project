@@ -7,7 +7,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,6 +19,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import nz.ac.auckland.apiproxy.chat.openai.ChatCompletionRequest;
@@ -56,14 +57,22 @@ public class RoomController {
   @FXML private TextArea chatLogCashier;
   @FXML private TextArea chatLogGrandma;
 
+  @FXML private Label timerLabel;
+
   private ChatCompletionRequest chatCompletionRequest;
   private String profession;
   private String currentCharacter;
   private TextArea currentArea;
   private boolean animationFinished = false;
+  private int timerValue;
+  private boolean timerRanOut = false;
+  private Thread timerThread;
 
   private static boolean isFirstTimeInit = true;
   private GameStateContext context = new GameStateContext(this);
+  private Media ranOutAudio =
+      new Media(getClass().getResource("/sounds/ranOutAudio.mp3").toString());
+  private MediaPlayer ranOutPlayer = new MediaPlayer(ranOutAudio);
 
   /**
    * Initializes the room view. If it's the first time initialization, it will provide instructions
@@ -71,9 +80,9 @@ public class RoomController {
    */
   @FXML
   public void initialize() {
+    startCountdownTimer(121);
     if (isFirstTimeInit) {
-      TextToSpeech.speak(
-          "Chat with the three customers, and guess who is the " + context.getProfessionToGuess());
+      TextToSpeech.speak("You must talk to at least one suspect before guessing.");
       isFirstTimeInit = false;
     }
     lblProfession.setText(context.getProfessionToGuess());
@@ -127,7 +136,12 @@ public class RoomController {
    * @throws IOException if there is an I/O error
    */
   @FXML
-  private void handleGuessClick(ActionEvent event) throws IOException {
+  private void handleGuessClick() throws IOException {
+    if (timerThread != null && timerThread.isAlive()) {
+      timerThread.interrupt();
+    }
+    timerRanOut = true;
+    startCountdownTimer(11);
     context.handleGuessClick();
   }
 
@@ -317,5 +331,43 @@ public class RoomController {
       default:
         break;
     }
+  }
+
+  private void startCountdownTimer(int timerValue) {
+    this.timerValue = timerValue;
+
+    timerThread =
+        new Thread(
+            () -> {
+              try {
+                while (this.timerValue > 0) {
+                  Thread.sleep(1000);
+                  this.timerValue--;
+                  Platform.runLater(() -> timerLabel.setText(Integer.toString(this.timerValue)));
+                }
+                if (!timerRanOut) {
+                  Platform.runLater(
+                      () -> {
+                        try {
+                          handleGuessClick();
+                        } catch (IOException e) {
+                          e.printStackTrace();
+                        }
+                      });
+                } else {
+                  timeOut();
+                }
+              } catch (InterruptedException e) {
+                // Handle thread interruption
+                Thread.currentThread().interrupt();
+              }
+            });
+    timerThread.setDaemon(true);
+    timerThread.start();
+  }
+
+  private void timeOut() {
+    ranOutPlayer.play();
+    context.setState(context.getGameOverState());
   }
 }
