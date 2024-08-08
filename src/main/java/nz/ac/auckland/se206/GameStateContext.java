@@ -33,7 +33,7 @@ public class GameStateContext {
   /** Constructs a new GameStateContext and initializes the game states and professions. */
   public GameStateContext(RoomController roomController) {
     gameStartedState = new GameStarted(this, roomController);
-    guessingState = new Guessing(this);
+    guessingState = new Guessing(this, roomController);
     gameOverState = new GameOver(this);
 
     gameState = gameStartedState; // Initial state

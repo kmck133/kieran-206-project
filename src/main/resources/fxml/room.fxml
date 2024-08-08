@@ -21,17 +21,17 @@
             <Image url="@../images/store.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="84.0" fitWidth="80.0" layoutX="291.0" layoutY="241.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imageCashier" fitHeight="84.0" fitWidth="80.0" layoutX="291.0" layoutY="241.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/cashier.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="285.0" fitWidth="131.0" layoutX="193.0" layoutY="305.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imageGrandma" fitHeight="285.0" fitWidth="131.0" layoutX="193.0" layoutY="305.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/grandma.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="226.0" fitWidth="109.0" layoutX="505.0" layoutY="363.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imageKid" fitHeight="226.0" fitWidth="109.0" layoutX="505.0" layoutY="363.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/kid.png" />
          </image>
@@ -49,9 +49,9 @@
             <Button fx:id="btnSend" layoutX="588.0" layoutY="456.0" mnemonicParsing="false" onAction="#onSendMessage" prefHeight="29.0" prefWidth="73.0" text="Send" />
          </children>
       </AnchorPane>
-      <Rectangle fx:id="rectGrandma" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="117.0" layoutX="214.0" layoutY="310.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
-      <Rectangle fx:id="rectCashier" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="70.0" layoutX="295.0" layoutY="241.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
-      <Rectangle fx:id="rectKid" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="107.0" layoutX="512.0" layoutY="363.0" onMouseClicked="#handleRectangleClick" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
+      <Rectangle fx:id="rectGrandma" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="263.0" layoutX="214.0" layoutY="319.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="99.0" />
+      <Rectangle fx:id="rectCashier" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="74.0" layoutX="295.0" layoutY="243.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
+      <Rectangle fx:id="rectKid" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="211.0" layoutX="512.0" layoutY="370.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
       <Label layoutX="96.0" layoutY="14.0" text="SOFTENG206 - Guess Who ?">
          <font>
             <Font size="38.0" />

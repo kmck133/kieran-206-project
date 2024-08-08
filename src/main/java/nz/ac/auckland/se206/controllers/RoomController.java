@@ -39,6 +39,10 @@ import nz.ac.auckland.se206.speech.TextToSpeech;
  */
 public class RoomController {
 
+  @FXML private ImageView imageKid;
+  @FXML private ImageView imageGrandma;
+  @FXML private ImageView imageCashier;
+
   @FXML private Rectangle rectKid;
   @FXML private Rectangle rectGrandma;
   @FXML private Rectangle rectCashier;
@@ -67,12 +71,17 @@ public class RoomController {
   private int timerValue;
   private boolean timerRanOut = false;
   private Thread timerThread;
+  private boolean suspectTalkedTo = false;
 
   private static boolean isFirstTimeInit = true;
   private GameStateContext context = new GameStateContext(this);
   private Media ranOutAudio =
       new Media(getClass().getResource("/sounds/ranOutAudio.mp3").toString());
   private MediaPlayer ranOutPlayer = new MediaPlayer(ranOutAudio);
+
+  private Media talkToSuspectAudio =
+      new Media(getClass().getResource("/sounds/talkToSuspectAudio.mp3").toString());
+  private MediaPlayer talkToSuspectPlayer = new MediaPlayer(talkToSuspectAudio);
 
   /**
    * Initializes the room view. If it's the first time initialization, it will provide instructions
@@ -82,7 +91,7 @@ public class RoomController {
   public void initialize() {
     startCountdownTimer(121);
     if (isFirstTimeInit) {
-      TextToSpeech.speak("You must talk to at least one suspect before guessing.");
+      TextToSpeech.speak("You have 10 seconds to make a guess on who the thief is.");
       isFirstTimeInit = false;
     }
     lblProfession.setText(context.getProfessionToGuess());
@@ -125,6 +134,7 @@ public class RoomController {
    */
   @FXML
   private void handleRectangleClick(MouseEvent event) throws IOException {
+    suspectTalkedTo = true;
     Rectangle clickedRectangle = (Rectangle) event.getSource();
     context.handleRectangleClick(event, clickedRectangle.getId());
   }
@@ -137,9 +147,11 @@ public class RoomController {
    */
   @FXML
   private void handleGuessClick() throws IOException {
-    if (timerThread != null && timerThread.isAlive()) {
-      timerThread.interrupt();
+    if (!suspectTalkedTo) {
+      talkToSuspectPlayer.play();
+      return;
     }
+    stopTimer();
     timerRanOut = true;
     startCountdownTimer(11);
     context.handleGuessClick();
@@ -369,5 +381,56 @@ public class RoomController {
   private void timeOut() {
     ranOutPlayer.play();
     context.setState(context.getGameOverState());
+  }
+
+  public void stopTimer() {
+    if (timerThread != null && timerThread.isAlive()) {
+      timerThread.interrupt();
+    }
+  }
+
+  @FXML
+  private void suspectGlow(MouseEvent event) {
+    Rectangle rect = (Rectangle) event.getSource();
+    String id = rect.getId();
+    String characterName = id.replace("rect", "");
+    Image image =
+        new Image(getClass().getResourceAsStream("/images/glow" + characterName + ".png"));
+    switch (characterName) {
+      case "Kid":
+        imageKid.setImage(image);
+        break;
+      case "Grandma":
+        imageGrandma.setImage(image);
+        break;
+      case "Cashier":
+        imageCashier.setImage(image);
+        break;
+      default:
+        break;
+    }
+  }
+
+  @FXML
+  private void suspectUnglow(MouseEvent event) {
+    Rectangle rect = (Rectangle) event.getSource();
+    String id = rect.getId();
+    String characterName = id.replace("rect", "");
+    Image image =
+        new Image(
+            getClass().getResourceAsStream("/images/" + characterName.toLowerCase() + ".png"));
+    switch (characterName) {
+      case "Kid":
+        imageKid.setImage(image);
+        break;
+      case "Grandma":
+        imageGrandma.setImage(image);
+        break;
+      case "Cashier":
+        imageCashier.setImage(image);
+        break;
+      default:
+        break;
+    }
   }
 }

@@ -3,6 +3,7 @@ package nz.ac.auckland.se206.states;
 import java.io.IOException;
 import javafx.scene.input.MouseEvent;
 import nz.ac.auckland.se206.GameStateContext;
+import nz.ac.auckland.se206.controllers.RoomController;
 import nz.ac.auckland.se206.speech.TextToSpeech;
 
 /**
@@ -12,14 +13,16 @@ import nz.ac.auckland.se206.speech.TextToSpeech;
 public class Guessing implements GameState {
 
   private final GameStateContext context;
+  private RoomController roomController;
 
   /**
    * Constructs a new Guessing state with the given game state context.
    *
    * @param context the context of the game state
    */
-  public Guessing(GameStateContext context) {
+  public Guessing(GameStateContext context, RoomController roomController) {
     this.context = context;
+    this.roomController = roomController;
   }
 
   /**
@@ -32,7 +35,7 @@ public class Guessing implements GameState {
    */
   @Override
   public void handleRectangleClick(MouseEvent event, String rectangleId) throws IOException {
-
+    roomController.stopTimer();
     String clickedProfession = context.getProfession(rectangleId);
     if (rectangleId.equals(context.getRectIdToGuess())) {
       TextToSpeech.speak("Correct! You won! This is the " + clickedProfession);
