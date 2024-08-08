@@ -103,8 +103,12 @@ public class RoomController {
   private MediaPlayer talkToSuspectPlayer = new MediaPlayer(talkToSuspectAudio);
 
   private Media tenSecondsAudio =
-      new Media(getClass().getResource("/sounds/tenSeconds.mp3").toString());
+      new Media(getClass().getResource("/sounds/tenSecondsAudio.mp3").toString());
   private MediaPlayer tenSecondsPlayer = new MediaPlayer(tenSecondsAudio);
+
+  private Media interactWithObjectAudio =
+      new Media(getClass().getResource("/sounds/interactWithObjectAudio.mp3").toString());
+  private MediaPlayer interactWithObjectPlayer = new MediaPlayer(interactWithObjectAudio);
 
   /**
    * Initializes the room view. If it's the first time initialization, it will provide instructions
@@ -114,7 +118,7 @@ public class RoomController {
   public void initialize() {
     startCountdownTimer(121);
     if (isFirstTimeInit) {
-      TextToSpeech.speak("You have 10 seconds to make a guess on who the thief is.");
+      TextToSpeech.speak("You must interact with at lease one object before guessing.");
       isFirstTimeInit = false;
     }
     lblProfession.setText(context.getProfessionToGuess());
@@ -172,19 +176,25 @@ public class RoomController {
       String clueText = "";
       switch (rectId) {
         case "rectBin":
-          clueText = "looks like a bin lol";
+          clueText =
+              "You see a bin by the shelves. Inside it, you find a crumpled list of groceries. One"
+                  + " of the items reads 'Headphones for Billy'.";
           break;
         case "rectTag":
-          clueText = "lmao now it's a tag";
+          clueText =
+              "You spot a plastic black object near the register. It looks like one of the security"
+                  + " tags on the tech products here.";
           break;
         case "rectTv":
-          clueText = "wow tv so cool";
+          clueText =
+              "You go over to check the screen that shows the security footage. Looks like it's"
+                  + " off.";
           break;
         default:
           break;
       }
       cluePane.setVisible(true);
-      appendChatMessage(new ChatMessage("user", clueText), "", "clue");
+      txtaClue.appendText(clueText);
       clickedRectangle.setVisible(false);
     }
   }
@@ -200,9 +210,13 @@ public class RoomController {
     if (!suspectTalkedTo) {
       talkToSuspectPlayer.play();
       return;
+    } else if (!clueLookedAt) {
+      interactWithObjectPlayer.play();
+      return;
     }
     if (stateIsGameStarted) {
       closeChat();
+      closeClue();
       stopTimer();
       timerRanOut = true;
       tenSecondsPlayer.play();
@@ -337,7 +351,7 @@ public class RoomController {
     Timeline timeline =
         new Timeline(
             new KeyFrame(
-                Duration.millis(100),
+                Duration.millis(75),
                 event -> {
                   if (index[0] < msg.getContent().length()) {
                     currentArea.appendText(String.valueOf(msg.getContent().charAt(index[0])));
@@ -438,15 +452,22 @@ public class RoomController {
             chatPane.setVisible(true);
             switch (currentCharacter) {
               case "Kid":
-                appendChatMessage(new ChatMessage("assistant", "kid filler text lol"), "", "chat");
+                appendChatMessage(
+                    new ChatMessage("assistant", "You approach the kid. He seems full of energy."),
+                    "",
+                    "chat");
                 break;
               case "Grandma":
                 appendChatMessage(
-                    new ChatMessage("assistant", "grandma filler text lol"), "", "chat");
+                    new ChatMessage("assistant", "You approach the grandma. She seems down."),
+                    "",
+                    "chat");
                 break;
               case "Cashier":
                 appendChatMessage(
-                    new ChatMessage("assistant", "cashier filler text lol"), "", "chat");
+                    new ChatMessage("assistant", "You approach the Cashier. He looks bored."),
+                    "",
+                    "chat");
               default:
                 break;
             }
@@ -507,7 +528,7 @@ public class RoomController {
                 if (!timerRanOut) {
                   Platform.runLater(
                       () -> {
-                        if (!suspectTalkedTo) {
+                        if (!suspectTalkedTo || !clueLookedAt) {
                           timeOut();
                         } else {
                           try {
