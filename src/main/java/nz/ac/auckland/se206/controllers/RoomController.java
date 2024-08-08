@@ -72,6 +72,7 @@ public class RoomController {
   private boolean timerRanOut = false;
   private Thread timerThread;
   private boolean suspectTalkedTo = false;
+  private boolean stateIsGameStarted = true;
 
   private boolean firstKid = true;
   private boolean firstGrandma = true;
@@ -99,7 +100,7 @@ public class RoomController {
    */
   @FXML
   public void initialize() {
-    startCountdownTimer(121);
+    startCountdownTimer(20);
     if (isFirstTimeInit) {
       TextToSpeech.speak("You have 10 seconds to make a guess on who the thief is.");
       isFirstTimeInit = false;
@@ -161,11 +162,14 @@ public class RoomController {
       talkToSuspectPlayer.play();
       return;
     }
-    closeChat();
-    stopTimer();
-    timerRanOut = true;
-    tenSecondsPlayer.play();
-    startCountdownTimer(11);
+    if (stateIsGameStarted) {
+      closeChat();
+      stopTimer();
+      timerRanOut = true;
+      tenSecondsPlayer.play();
+      startCountdownTimer(11);
+      stateIsGameStarted = false;
+    }
     context.handleGuessClick();
   }
 
@@ -453,10 +457,14 @@ public class RoomController {
                 if (!timerRanOut) {
                   Platform.runLater(
                       () -> {
-                        try {
-                          handleGuessClick();
-                        } catch (IOException e) {
-                          e.printStackTrace();
+                        if (!suspectTalkedTo) {
+                          timeOut();
+                        } else {
+                          try {
+                            handleGuessClick();
+                          } catch (IOException e) {
+                            e.printStackTrace();
+                          }
                         }
                       });
                 } else {

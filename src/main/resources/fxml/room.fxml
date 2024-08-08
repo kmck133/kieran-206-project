@@ -21,6 +21,21 @@
             <Image url="@../images/store.png" />
          </image>
       </ImageView>
+      <ImageView fitHeight="65.0" fitWidth="80.0" layoutX="485.0" layoutY="135.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/tv.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="115.0" fitWidth="73.0" layoutX="52.0" layoutY="500.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/bin.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="31.0" fitWidth="28.0" layoutX="378.0" layoutY="453.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/tag.png" />
+         </image>
+      </ImageView>
       <ImageView fx:id="imageCashier" fitHeight="84.0" fitWidth="80.0" layoutX="291.0" layoutY="241.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/cashier.png" />
@@ -49,25 +64,6 @@
             <Button fx:id="btnSend" layoutX="588.0" layoutY="456.0" mnemonicParsing="false" onAction="#onSendMessage" prefHeight="29.0" prefWidth="73.0" text="Send" />
          </children>
       </AnchorPane>
-      <Rectangle fx:id="rectGrandma" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="263.0" layoutX="214.0" layoutY="319.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="99.0" />
-      <Rectangle fx:id="rectCashier" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="74.0" layoutX="295.0" layoutY="243.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
-      <Rectangle fx:id="rectKid" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="211.0" layoutX="512.0" layoutY="370.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
-      <Label layoutX="96.0" layoutY="14.0" text="SOFTENG206 - Guess Who ?">
-         <font>
-            <Font size="38.0" />
-         </font>
-      </Label>
-      <Button fx:id="btnGuess" layoutX="289.0" layoutY="99.0" mnemonicParsing="false" onAction="#handleGuessClick" text="Make a Guess" />
-      <Label layoutX="47.0" layoutY="62.0" text="Talk to the three suspects and figure out who stole the (thing)">
-         <font>
-            <Font size="21.0" />
-         </font>
-      </Label>
-      <Label fx:id="lblProfession" layoutX="430.0" layoutY="87.0" prefHeight="37.0" prefWidth="208.0" wrapText="true">
-         <font>
-            <Font size="21.0" />
-         </font>
-      </Label>
       <TitledPane fx:id="chatLogPane" expanded="false" layoutY="109.0" prefHeight="479.0" prefWidth="202.0" text="Chat Logs">
          <content>
             <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
@@ -103,6 +99,28 @@
             </TabPane>
          </content>
       </TitledPane>
+      <Rectangle fx:id="rectBin" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="111.0" layoutX="56.0" layoutY="501.0" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="64.0" />
+      <Rectangle fx:id="rectTv" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="64.0" layoutX="486.0" layoutY="137.0" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="80.0" />
+      <Rectangle fx:id="rectTag" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="27.0" layoutX="379.0" layoutY="454.0" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="27.0" />
+      <Rectangle fx:id="rectGrandma" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="263.0" layoutX="214.0" layoutY="319.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="99.0" />
+      <Rectangle fx:id="rectCashier" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="74.0" layoutX="295.0" layoutY="243.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
+      <Rectangle fx:id="rectKid" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="211.0" layoutX="512.0" layoutY="370.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
+      <Label layoutX="96.0" layoutY="14.0" text="SOFTENG206 - Guess Who ?">
+         <font>
+            <Font size="38.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnGuess" layoutX="289.0" layoutY="99.0" mnemonicParsing="false" onAction="#handleGuessClick" text="Make a Guess" />
+      <Label layoutX="47.0" layoutY="62.0" text="Talk to the three suspects and figure out who stole the (thing)">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblProfession" layoutX="430.0" layoutY="87.0" prefHeight="37.0" prefWidth="208.0" wrapText="true">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
       <Label fx:id="timerLabel" layoutX="595.0" layoutY="22.0" prefHeight="39.0" prefWidth="48.0" text="120">
          <font>
             <Font size="27.0" />
