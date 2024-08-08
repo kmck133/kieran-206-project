@@ -42,10 +42,17 @@ public class RoomController {
   @FXML private ImageView imageKid;
   @FXML private ImageView imageGrandma;
   @FXML private ImageView imageCashier;
+  @FXML private ImageView imageBin;
+  @FXML private ImageView imageTag;
+  @FXML private ImageView imageTv;
 
   @FXML private Rectangle rectKid;
   @FXML private Rectangle rectGrandma;
   @FXML private Rectangle rectCashier;
+  @FXML private Rectangle rectBin;
+  @FXML private Rectangle rectTag;
+  @FXML private Rectangle rectTv;
+
   @FXML private Label lblProfession;
   @FXML private Button btnGuess;
 
@@ -55,6 +62,10 @@ public class RoomController {
   @FXML private TextField txtInput;
   @FXML private Button btnSend;
   @FXML private Button btnBack;
+
+  @FXML private AnchorPane cluePane;
+  @FXML private TextArea txtaClue;
+  @FXML private Button btnBackClue;
 
   @FXML private TitledPane chatLogPane;
   @FXML private TextArea chatLogKid;
@@ -72,6 +83,7 @@ public class RoomController {
   private boolean timerRanOut = false;
   private Thread timerThread;
   private boolean suspectTalkedTo = false;
+  private boolean clueLookedAt = false;
   private boolean stateIsGameStarted = true;
 
   private boolean firstKid = true;
@@ -100,7 +112,7 @@ public class RoomController {
    */
   @FXML
   public void initialize() {
-    startCountdownTimer(20);
+    startCountdownTimer(121);
     if (isFirstTimeInit) {
       TextToSpeech.speak("You have 10 seconds to make a guess on who the thief is.");
       isFirstTimeInit = false;
@@ -148,6 +160,33 @@ public class RoomController {
     suspectTalkedTo = true;
     Rectangle clickedRectangle = (Rectangle) event.getSource();
     context.handleRectangleClick(event, clickedRectangle.getId());
+  }
+
+  @FXML
+  private void handleClueClick(MouseEvent event) throws IOException {
+    if (stateIsGameStarted) {
+      closeChat();
+      clueLookedAt = true;
+      Rectangle clickedRectangle = (Rectangle) event.getSource();
+      String rectId = clickedRectangle.getId();
+      String clueText = "";
+      switch (rectId) {
+        case "rectBin":
+          clueText = "looks like a bin lol";
+          break;
+        case "rectTag":
+          clueText = "lmao now it's a tag";
+          break;
+        case "rectTv":
+          clueText = "wow tv so cool";
+          break;
+        default:
+          break;
+      }
+      cluePane.setVisible(true);
+      appendChatMessage(new ChatMessage("user", clueText), "", "clue");
+      clickedRectangle.setVisible(false);
+    }
   }
 
   /**
@@ -222,7 +261,7 @@ public class RoomController {
           animationFinished = false;
           setChatLog();
           currentArea.appendText("User: " + msg.getContent() + "\n\n");
-          appendChatMessage(msg, "User");
+          appendChatMessage(msg, "User", "chat");
         });
   }
 
@@ -281,9 +320,18 @@ public class RoomController {
    *
    * @param msg the chat message to append
    */
-  private void appendChatMessage(ChatMessage msg, String sender) {
+  private void appendChatMessage(ChatMessage msg, String sender, String area) {
+    TextArea currentArea;
+    switch (area) {
+      case "clue":
+        currentArea = txtaClue;
+        break;
+      default:
+        currentArea = txtaChat;
+        break;
+    }
     if (sender != "") {
-      txtaChat.appendText(sender + ": ");
+      currentArea.appendText(sender + ": ");
     }
     final int[] index = {0};
     Timeline timeline =
@@ -292,14 +340,14 @@ public class RoomController {
                 Duration.millis(100),
                 event -> {
                   if (index[0] < msg.getContent().length()) {
-                    txtaChat.appendText(String.valueOf(msg.getContent().charAt(index[0])));
+                    currentArea.appendText(String.valueOf(msg.getContent().charAt(index[0])));
                     index[0]++;
                   }
                 }));
     timeline.setCycleCount(msg.getContent().length());
     timeline.setOnFinished(
         event -> {
-          txtaChat.appendText("\n\n");
+          currentArea.appendText("\n\n");
           animationFinished = true;
         });
     timeline.play();
@@ -341,7 +389,7 @@ public class RoomController {
   private void speakGpt(ChatMessage msg) {
     setChatLog();
     currentArea.appendText(currentCharacter + ": " + msg.getContent() + "\n\n");
-    appendChatMessage(msg, currentCharacter);
+    appendChatMessage(msg, currentCharacter, "chat");
     TextToSpeech.speak(msg.getContent());
   }
 
@@ -390,13 +438,15 @@ public class RoomController {
             chatPane.setVisible(true);
             switch (currentCharacter) {
               case "Kid":
-                appendChatMessage(new ChatMessage("assistant", "kid filler text lol"), "");
+                appendChatMessage(new ChatMessage("assistant", "kid filler text lol"), "", "chat");
                 break;
               case "Grandma":
-                appendChatMessage(new ChatMessage("assistant", "grandma filler text lol"), "");
+                appendChatMessage(
+                    new ChatMessage("assistant", "grandma filler text lol"), "", "chat");
                 break;
               case "Cashier":
-                appendChatMessage(new ChatMessage("assistant", "cashier filler text lol"), "");
+                appendChatMessage(
+                    new ChatMessage("assistant", "cashier filler text lol"), "", "chat");
               default:
                 break;
             }
@@ -507,6 +557,15 @@ public class RoomController {
       case "Cashier":
         imageCashier.setImage(image);
         break;
+      case "Bin":
+        imageBin.setImage(image);
+        break;
+      case "Tag":
+        imageTag.setImage(image);
+        break;
+      case "Tv":
+        imageTv.setImage(image);
+        break;
       default:
         break;
     }
@@ -530,6 +589,15 @@ public class RoomController {
       case "Cashier":
         imageCashier.setImage(image);
         break;
+      case "Bin":
+        imageBin.setImage(image);
+        break;
+      case "Tag":
+        imageTag.setImage(image);
+        break;
+      case "Tv":
+        imageTv.setImage(image);
+        break;
       default:
         break;
     }
@@ -546,5 +614,11 @@ public class RoomController {
       default:
         return false;
     }
+  }
+
+  @FXML
+  public void closeClue() {
+    cluePane.setVisible(false);
+    txtaClue.clear();
   }
 }
