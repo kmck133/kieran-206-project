@@ -169,12 +169,14 @@ public class RoomController {
 
   @FXML
   private void handleClueClick(MouseEvent event) throws IOException {
+    // Make all this happen only if the state is in 'gameStarted'
     if (stateIsGameStarted) {
       onCloseChat();
       clueLookedAt = true;
       Rectangle clickedRectangle = (Rectangle) event.getSource();
       String rectId = clickedRectangle.getId();
       String clueText = "";
+      // Show the correct clue text for each item depending on what it is
       switch (rectId) {
         case "rectBin":
           clueText =
@@ -195,7 +197,8 @@ public class RoomController {
           break;
       }
       cluePane.setVisible(true);
-      txtaClue.appendText(clueText);
+      txtaClue.appendText(
+          clueText); // Don't play the animation, as nobody is talking, so it wouldn't make sense
       clickedRectangle.setVisible(false);
     }
   }
@@ -243,7 +246,9 @@ public class RoomController {
     }
     txtInput.clear();
     ChatMessage msg = new ChatMessage("user", message);
-    Task<ChatMessage> gptTask =
+
+    // Starts running an animation to make the text appear letter by letter
+    Task<ChatMessage> gptTask = // creates a background task to generate the response of the suspect
         new Task<ChatMessage>() {
           @Override
           protected ChatMessage call() throws Exception {
@@ -251,7 +256,7 @@ public class RoomController {
           }
         };
 
-    gptTask.setOnSucceeded(
+    gptTask.setOnSucceeded( // once it's done and the animation is finished, put the box in the chat
         event -> {
           ChatMessage gptMsg = gptTask.getValue();
 
@@ -269,14 +274,16 @@ public class RoomController {
               .start();
         });
 
-    new Thread(gptTask).start();
+    new Thread(gptTask).start(); // start the background thread
 
+    // after starting the background thread, set animationFinished back to false and start playing
+    // the animation for user text
     Platform.runLater(
         () -> {
           animationFinished = false;
           setChatLog();
           currentArea.appendText("User: " + msg.getContent() + "\n\n");
-          appendChatMessage(msg, "User", "chat");
+          appendChatMessage(msg, "User");
         });
   }
 
@@ -288,10 +295,12 @@ public class RoomController {
   public void setProfession(String profession) {
     this.profession = profession;
 
+    // Generate a welcome message only if it's first time talking
     if (!firstTimeCheck(currentCharacter)) {
       return;
     }
 
+    // After this part of the code runs, make sure it doesn't again the next time
     switch (currentCharacter) {
       case "Kid":
         firstKid = false;
@@ -304,6 +313,7 @@ public class RoomController {
         break;
     }
 
+    // Generate opening message
     try {
       ApiProxyConfig config = ApiProxyConfig.readConfig();
       chatCompletionRequest =
@@ -335,19 +345,14 @@ public class RoomController {
    *
    * @param msg the chat message to append
    */
-  private void appendChatMessage(ChatMessage msg, String sender, String area) {
-    TextArea currentArea;
-    switch (area) {
-      case "clue":
-        currentArea = txtaClue;
-        break;
-      default:
-        currentArea = txtaChat;
-        break;
-    }
+  private void appendChatMessage(ChatMessage msg, String sender) {
+    TextArea currentArea = txtaChat;
+    // If nobody is talking (like narration), don't say who the speaker is
     if (sender != "") {
       currentArea.appendText(sender + ": ");
     }
+
+    // Play an animation to append text letter by letter to the text area
     final int[] index = {0};
     Timeline timeline =
         new Timeline(
@@ -360,6 +365,7 @@ public class RoomController {
                   }
                 }));
     timeline.setCycleCount(msg.getContent().length());
+    // Once it's done, append new lines and set animationFinished to 'true'
     timeline.setOnFinished(
         event -> {
           currentArea.appendText("\n\n");
@@ -404,7 +410,7 @@ public class RoomController {
   private void speakGpt(ChatMessage msg) {
     setChatLog();
     currentArea.appendText(currentCharacter + ": " + msg.getContent() + "\n\n");
-    appendChatMessage(msg, currentCharacter, "chat");
+    appendChatMessage(msg, currentCharacter);
     TextToSpeech.speak(msg.getContent());
   }
 
@@ -419,6 +425,8 @@ public class RoomController {
     setHeadImage(event);
     setChatLog();
 
+    // For the first time chatting with a suspect, use concurrency to play opening text while
+    // generating response
     if (firstTimeCheck(currentCharacter)) {
       Task<Void> professionTask =
           new Task<Void>() {
@@ -447,6 +455,7 @@ public class RoomController {
 
       new Thread(professionTask).start();
 
+      // Show different opening message for each suspect
       Platform.runLater(
           () -> {
             animationFinished = false;
@@ -455,25 +464,20 @@ public class RoomController {
               case "Kid":
                 appendChatMessage(
                     new ChatMessage("assistant", "You approach the kid. He seems full of energy."),
-                    "",
-                    "chat");
+                    "");
                 break;
               case "Grandma":
                 appendChatMessage(
-                    new ChatMessage("assistant", "You approach the grandma. She seems down."),
-                    "",
-                    "chat");
+                    new ChatMessage("assistant", "You approach the grandma. She seems down."), "");
                 break;
               case "Cashier":
                 appendChatMessage(
-                    new ChatMessage("assistant", "You approach the Cashier. He looks bored."),
-                    "",
-                    "chat");
+                    new ChatMessage("assistant", "You approach the Cashier. He looks bored."), "");
               default:
                 break;
             }
           });
-    } else {
+    } else { // if is not first time chatting, don't play animation
       chatPane.setVisible(true);
       setProfession(profession);
     }
@@ -517,16 +521,20 @@ public class RoomController {
   private void startCountdownTimer(int timerValue) {
     this.timerValue = timerValue;
 
+    // Makes a new thread that runs in the background of everything and keeps the timer going at all
+    // times during the game when it's supposed to
     timerThread =
         new Thread(
             () -> {
               try {
-                while (this.timerValue > 0) {
+                while (this.timerValue
+                    > 0) { // every second, decrease the tiner value by 1 and update the label
                   Thread.sleep(1000);
                   this.timerValue--;
                   Platform.runLater(() -> timerLabel.setText(Integer.toString(this.timerValue)));
                 }
-                if (!timerRanOut) {
+                if (!timerRanOut) { // if it ends for the first time, give extra 10 seconds to guess
+                  // if eligible
                   Platform.runLater(
                       () -> {
                         if (!suspectTalkedTo || !clueLookedAt) {
@@ -567,8 +575,11 @@ public class RoomController {
     Rectangle rect = (Rectangle) event.getSource();
     String id = rect.getId();
     String characterName = id.replace("rect", "");
+    // Fetches the appropriate glowing image of the suspect/clue
     Image image =
         new Image(getClass().getResourceAsStream("/images/glow" + characterName + ".png"));
+
+    // Sets the image to the glowing one when the mouse enters the rectangle
     switch (characterName) {
       case "Kid":
         imageKid.setImage(image);
@@ -598,9 +609,12 @@ public class RoomController {
     Rectangle rect = (Rectangle) event.getSource();
     String id = rect.getId();
     String characterName = id.replace("rect", "");
+    // Get the right normal image of the current item/suspect
     Image image =
         new Image(
             getClass().getResourceAsStream("/images/" + characterName.toLowerCase() + ".png"));
+
+    // When mouse leaves the rectangle, set back to not glowing image
     switch (characterName) {
       case "Kid":
         imageKid.setImage(image);
