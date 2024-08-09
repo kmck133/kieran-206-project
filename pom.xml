@@ -32,7 +32,7 @@
             <mainClass>nz.ac.auckland.se206.App</mainClass>
           </configuration>
           <groupId>org.openjfx</groupId>
-          <version>0.0.3</version>
+          <version>0.0.8</version>
           <executions>
             <execution>
               <id>debug</id>

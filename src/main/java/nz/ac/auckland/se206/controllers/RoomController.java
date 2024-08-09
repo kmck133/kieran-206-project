@@ -39,6 +39,8 @@ import nz.ac.auckland.se206.speech.TextToSpeech;
  */
 public class RoomController {
 
+  private static boolean isFirstTimeInit = true;
+
   @FXML private ImageView imageKid;
   @FXML private ImageView imageGrandma;
   @FXML private ImageView imageCashier;
@@ -92,7 +94,6 @@ public class RoomController {
 
   private ChatMessage openMsg;
 
-  private static boolean isFirstTimeInit = true;
   private GameStateContext context = new GameStateContext(this);
   private Media ranOutAudio =
       new Media(getClass().getResource("/sounds/ranOutAudio.mp3").toString());
@@ -169,7 +170,7 @@ public class RoomController {
   @FXML
   private void handleClueClick(MouseEvent event) throws IOException {
     if (stateIsGameStarted) {
-      closeChat();
+      onCloseChat();
       clueLookedAt = true;
       Rectangle clickedRectangle = (Rectangle) event.getSource();
       String rectId = clickedRectangle.getId();
@@ -215,8 +216,8 @@ public class RoomController {
       return;
     }
     if (stateIsGameStarted) {
-      closeChat();
-      closeClue();
+      onCloseChat();
+      onCloseClue();
       stopTimer();
       timerRanOut = true;
       tenSecondsPlayer.play();
@@ -489,7 +490,7 @@ public class RoomController {
   }
 
   @FXML
-  public void closeChat() {
+  private void onCloseChat() {
     chatPane.setVisible(false);
     clearChat();
   }
@@ -638,7 +639,7 @@ public class RoomController {
   }
 
   @FXML
-  public void closeClue() {
+  private void onCloseClue() {
     cluePane.setVisible(false);
     txtaClue.clear();
   }
