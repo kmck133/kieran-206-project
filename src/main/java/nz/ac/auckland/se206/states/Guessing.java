@@ -4,7 +4,6 @@ import java.io.IOException;
 import javafx.scene.input.MouseEvent;
 import nz.ac.auckland.se206.GameStateContext;
 import nz.ac.auckland.se206.controllers.RoomController;
-import nz.ac.auckland.se206.speech.TextToSpeech;
 
 /**
  * The Guessing state of the game. Handles the logic for when the player is making a guess about the
@@ -36,13 +35,12 @@ public class Guessing implements GameState {
   @Override
   public void handleRectangleClick(MouseEvent event, String rectangleId) throws IOException {
     roomController.stopTimer();
-    String clickedProfession = context.getProfession(rectangleId);
     if (rectangleId.equals("rectCashier")) {
       roomController.correctGuess();
-      TextToSpeech.speak("Correct! You won! This is the " + clickedProfession);
+      roomController.correctPlayer.play();
     } else {
       roomController.incorrectGuess();
-      TextToSpeech.speak("You lost! This is the " + clickedProfession);
+      roomController.incorrectPlayer.play();
     }
     context.setState(context.getGameOverState());
   }
@@ -55,6 +53,6 @@ public class Guessing implements GameState {
    */
   @Override
   public void handleGuessClick() throws IOException {
-    TextToSpeech.speak("You have already guessed!");
+    roomController.alreadyGuessedPlayer.play();
   }
 }

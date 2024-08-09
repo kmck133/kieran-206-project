@@ -4,7 +4,6 @@ import java.io.IOException;
 import javafx.scene.input.MouseEvent;
 import nz.ac.auckland.se206.GameStateContext;
 import nz.ac.auckland.se206.controllers.RoomController;
-import nz.ac.auckland.se206.speech.TextToSpeech;
 
 /**
  * The GameOver state of the game. Handles interactions after the game has ended, informing the
@@ -12,7 +11,7 @@ import nz.ac.auckland.se206.speech.TextToSpeech;
  */
 public class GameOver implements GameState {
 
-  private final GameStateContext context;
+  private RoomController roomController;
 
   /**
    * Constructs a new GameOver state with the given game state context.
@@ -20,7 +19,7 @@ public class GameOver implements GameState {
    * @param context the context of the game state
    */
   public GameOver(GameStateContext context, RoomController roomController) {
-    this.context = context;
+    this.roomController = roomController;
   }
 
   /**
@@ -33,8 +32,7 @@ public class GameOver implements GameState {
    */
   @Override
   public void handleRectangleClick(MouseEvent event, String rectangleId) throws IOException {
-    String clickedProfession = context.getProfession(rectangleId);
-    TextToSpeech.speak("Game Over, you have already guessed! This is the " + clickedProfession);
+    roomController.alreadyGuessedPlayer.play();
   }
 
   /**
@@ -45,6 +43,6 @@ public class GameOver implements GameState {
    */
   @Override
   public void handleGuessClick() throws IOException {
-    TextToSpeech.speak("You have already guessed!");
+    roomController.alreadyGuessedPlayer.play();
   }
 }

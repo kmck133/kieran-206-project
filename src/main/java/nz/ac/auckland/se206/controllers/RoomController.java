@@ -33,7 +33,7 @@ import nz.ac.auckland.apiproxy.config.ApiProxyConfig;
 import nz.ac.auckland.apiproxy.exceptions.ApiProxyException;
 import nz.ac.auckland.se206.GameStateContext;
 import nz.ac.auckland.se206.prompts.PromptEngineering;
-import nz.ac.auckland.se206.speech.TextToSpeech;
+import nz.ac.auckland.se206.speech.FreeTextToSpeech;
 
 /**
  * Controller class for the room view. Handles user interactions within the room where the user can
@@ -115,6 +115,22 @@ public class RoomController {
       new Media(getClass().getResource("/sounds/interactWithObjectAudio.mp3").toString());
   private MediaPlayer interactWithObjectPlayer = new MediaPlayer(interactWithObjectAudio);
 
+  private Media alreadyGuessedAudio =
+      new Media(getClass().getResource("/sounds/alreadyGuessedAudio.mp3").toString());
+  public MediaPlayer alreadyGuessedPlayer = new MediaPlayer(alreadyGuessedAudio);
+
+  private Media correctAudio =
+      new Media(getClass().getResource("/sounds/correctAudio.mp3").toString());
+  public MediaPlayer correctPlayer = new MediaPlayer(correctAudio);
+
+  private Media incorrectAudio =
+      new Media(getClass().getResource("/sounds/incorrectAudio.mp3").toString());
+  public MediaPlayer incorrectPlayer = new MediaPlayer(incorrectAudio);
+
+  private Media initialAudio =
+      new Media(getClass().getResource("/sounds/initialAudio.mp3").toString());
+  public MediaPlayer initialPlayer = new MediaPlayer(initialAudio);
+
   /**
    * Initializes the room view. If it's the first time initialization, it will provide instructions
    * via text-to-speech.
@@ -123,7 +139,7 @@ public class RoomController {
   public void initialize() {
     startCountdownTimer(121);
     if (isFirstTimeInit) {
-      TextToSpeech.speak("You must interact with at lease one object before guessing.");
+      initialPlayer.play();
       isFirstTimeInit = false;
     }
     txtInput.setOnKeyPressed(
@@ -444,7 +460,7 @@ public class RoomController {
     setChatLog();
     currentArea.appendText(currentCharacter + ": " + msg.getContent() + "\n\n");
     appendChatMessage(msg, currentCharacter);
-    TextToSpeech.speak(msg.getContent());
+    FreeTextToSpeech.speak(msg.getContent());
   }
 
   /**
