@@ -1,8 +1,6 @@
 package nz.ac.auckland.se206.controllers;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -55,7 +53,6 @@ public class RoomController {
   @FXML private Rectangle rectTag;
   @FXML private Rectangle rectTv;
 
-  @FXML private Label lblProfession;
   @FXML private Button btnGuess;
 
   @FXML private AnchorPane chatPane;
@@ -76,8 +73,8 @@ public class RoomController {
 
   @FXML private Label timerLabel;
 
+  private Timeline currentAnimation;
   private ChatCompletionRequest chatCompletionRequest;
-  private String profession;
   private String currentCharacter;
   private TextArea currentArea;
   private boolean animationFinished = false;
@@ -122,7 +119,6 @@ public class RoomController {
       TextToSpeech.speak("You must interact with at lease one object before guessing.");
       isFirstTimeInit = false;
     }
-    lblProfession.setText(context.getProfessionToGuess());
     txtInput.setOnKeyPressed(
         event -> {
           if (event.getCode() == KeyCode.ENTER) {
@@ -162,6 +158,7 @@ public class RoomController {
    */
   @FXML
   private void handleRectangleClick(MouseEvent event) throws IOException {
+    stopAnimation();
     suspectTalkedTo = true;
     Rectangle clickedRectangle = (Rectangle) event.getSource();
     context.handleRectangleClick(event, clickedRectangle.getId());
@@ -240,6 +237,7 @@ public class RoomController {
   @FXML
   private void onSendMessage() throws ApiProxyException, IOException {
     clearChat();
+    stopAnimation();
     String message = txtInput.getText().trim();
     if (message.isEmpty()) {
       return;
@@ -292,8 +290,7 @@ public class RoomController {
    *
    * @param profession the profession to set
    */
-  public void setProfession(String profession) {
-    this.profession = profession;
+  public void setPrompt() {
 
     // Generate a welcome message only if it's first time talking
     if (!firstTimeCheck(currentCharacter)) {
@@ -321,8 +318,8 @@ public class RoomController {
               .setN(1)
               .setTemperature(0.2)
               .setTopP(0.5)
-              .setMaxTokens(2);
-      ChatMessage openMsg = runGpt(new ChatMessage("system", getSystemPrompt()));
+              .setMaxTokens(50);
+      ChatMessage openMsg = runGpt(new ChatMessage("system", getSystemPrompt(currentCharacter)));
       this.openMsg = openMsg;
     } catch (ApiProxyException e) {
       e.printStackTrace();
@@ -334,10 +331,9 @@ public class RoomController {
    *
    * @return the system prompt string
    */
-  private String getSystemPrompt() {
-    Map<String, String> map = new HashMap<>();
-    map.put("profession", profession);
-    return PromptEngineering.getPrompt("chat.txt", map);
+  private String getSystemPrompt(String characterName) {
+
+    return PromptEngineering.getPrompt("chat" + characterName + ".txt", characterName);
   }
 
   /**
@@ -347,31 +343,42 @@ public class RoomController {
    */
   private void appendChatMessage(ChatMessage msg, String sender) {
     TextArea currentArea = txtaChat;
+
     // If nobody is talking (like narration), don't say who the speaker is
-    if (sender != "") {
+    if (!sender.isEmpty()) {
       currentArea.appendText(sender + ": ");
+    }
+
+    // If there is an animation running while trying to start a new one, stop it
+    if (currentAnimation != null && currentAnimation.getStatus() == Timeline.Status.RUNNING) {
+      currentAnimation.stop();
+      animationFinished = true;
     }
 
     // Play an animation to append text letter by letter to the text area
     final int[] index = {0};
-    Timeline timeline =
+    Timeline animation =
         new Timeline(
             new KeyFrame(
-                Duration.millis(75),
+                Duration.millis(50),
                 event -> {
                   if (index[0] < msg.getContent().length()) {
                     currentArea.appendText(String.valueOf(msg.getContent().charAt(index[0])));
                     index[0]++;
                   }
                 }));
-    timeline.setCycleCount(msg.getContent().length());
+
+    animation.setCycleCount(msg.getContent().length());
+
     // Once it's done, append new lines and set animationFinished to 'true'
-    timeline.setOnFinished(
+    animation.setOnFinished(
         event -> {
           currentArea.appendText("\n\n");
           animationFinished = true;
         });
-    timeline.play();
+
+    currentAnimation = animation;
+    currentAnimation.play();
   }
 
   /**
@@ -432,7 +439,7 @@ public class RoomController {
           new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-              setProfession(profession);
+              setPrompt();
               return null;
             }
           };
@@ -479,7 +486,7 @@ public class RoomController {
           });
     } else { // if is not first time chatting, don't play animation
       chatPane.setVisible(true);
-      setProfession(profession);
+      setPrompt();
     }
   }
 
@@ -567,6 +574,12 @@ public class RoomController {
   public void stopTimer() {
     if (timerThread != null && timerThread.isAlive()) {
       timerThread.interrupt();
+    }
+  }
+
+  public void stopAnimation() {
+    if (currentAnimation != null) {
+      currentAnimation.stop();
     }
   }
 

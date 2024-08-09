@@ -116,11 +116,6 @@
             <Font size="21.0" />
          </font>
       </Label>
-      <Label fx:id="lblProfession" layoutX="430.0" layoutY="87.0" prefHeight="37.0" prefWidth="208.0" wrapText="true">
-         <font>
-            <Font size="21.0" />
-         </font>
-      </Label>
       <Label fx:id="timerLabel" layoutX="595.0" layoutY="22.0" prefHeight="39.0" prefWidth="48.0" text="120">
          <font>
             <Font size="27.0" />
