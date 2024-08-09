@@ -37,10 +37,8 @@ public class Guessing implements GameState {
     roomController.stopTimer();
     if (rectangleId.equals("rectCashier")) {
       roomController.correctGuess();
-      roomController.correctPlayer.play();
     } else {
       roomController.incorrectGuess();
-      roomController.incorrectPlayer.play();
     }
     context.setState(context.getGameOverState());
   }
