@@ -123,10 +123,6 @@ public class RoomController {
       new Media(getClass().getResource("/sounds/correctAudio.mp3").toString());
   private MediaPlayer correctPlayer = new MediaPlayer(correctAudio);
 
-  private Media incorrectAudio =
-      new Media(getClass().getResource("/sounds/incorrectAudio.mp3").toString());
-  private MediaPlayer incorrectPlayer = new MediaPlayer(incorrectAudio);
-
   private Media initialAudio =
       new Media(getClass().getResource("/sounds/initialAudio.mp3").toString());
   private MediaPlayer initialPlayer = new MediaPlayer(initialAudio);
@@ -717,14 +713,11 @@ public class RoomController {
   public void correctGuess() {
     lblHeader.setText("Game over! You correctly guessed the thief!");
     correctPlayer.play();
-    lblHeader.setAlignment(Pos.CENTER);
     headerPane.setStyle("-fx-background-color: #5bf08a;");
   }
 
   public void incorrectGuess() {
     lblHeader.setText("Game over! You did not guess the thief correctly.");
-    incorrectPlayer.play();
-    lblHeader.setAlignment(Pos.CENTER);
     headerPane.setStyle("-fx-background-color: #f0795b;");
   }
 }
