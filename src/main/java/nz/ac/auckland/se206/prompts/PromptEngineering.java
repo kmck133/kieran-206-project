@@ -43,7 +43,7 @@ public class PromptEngineering {
    * @return the content of the template file as a string
    * @throws IOException if there is an error reading the file
    */
-  private static String loadTemplate(URI filePath) throws IOException {
+  public static String loadTemplate(URI filePath) throws IOException {
     return new String(Files.readAllBytes(Paths.get(filePath)));
   }
 }

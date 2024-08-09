@@ -1,6 +1,8 @@
 package nz.ac.auckland.se206.controllers;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -391,6 +393,22 @@ public class RoomController {
   private ChatMessage runGpt(ChatMessage msg) throws ApiProxyException {
 
     String conversationHistory = currentArea.getText();
+    String template = "";
+
+    URL resourceUrl =
+        PromptEngineering.class
+            .getClassLoader()
+            .getResource("prompts/chat" + currentCharacter + ".txt");
+    try {
+      template = PromptEngineering.loadTemplate(resourceUrl.toURI());
+    } catch (IOException | URISyntaxException e) {
+    }
+
+    String[] templateLines = template.split("\n");
+
+    for (String line : templateLines) {
+      chatCompletionRequest.addMessage(new ChatMessage("user", line));
+    }
 
     String[] lines = conversationHistory.split("\n\n");
     for (String line : lines) {
