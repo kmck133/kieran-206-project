@@ -3,6 +3,7 @@ package nz.ac.auckland.se206.states;
 import java.io.IOException;
 import javafx.scene.input.MouseEvent;
 import nz.ac.auckland.se206.GameStateContext;
+import nz.ac.auckland.se206.controllers.RoomController;
 import nz.ac.auckland.se206.speech.TextToSpeech;
 
 /**
@@ -18,7 +19,7 @@ public class GameOver implements GameState {
    *
    * @param context the context of the game state
    */
-  public GameOver(GameStateContext context) {
+  public GameOver(GameStateContext context, RoomController roomController) {
     this.context = context;
   }
 
@@ -32,9 +33,6 @@ public class GameOver implements GameState {
    */
   @Override
   public void handleRectangleClick(MouseEvent event, String rectangleId) throws IOException {
-    if (rectangleId.equals("rectCashier") || rectangleId.equals("rectWaitress")) {
-      return;
-    }
     String clickedProfession = context.getProfession(rectangleId);
     TextToSpeech.speak("Game Over, you have already guessed! This is the " + clickedProfession);
   }

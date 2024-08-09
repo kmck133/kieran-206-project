@@ -37,9 +37,11 @@ public class Guessing implements GameState {
   public void handleRectangleClick(MouseEvent event, String rectangleId) throws IOException {
     roomController.stopTimer();
     String clickedProfession = context.getProfession(rectangleId);
-    if (rectangleId.equals(context.getRectIdToGuess())) {
+    if (rectangleId.equals("rectCashier")) {
+      roomController.correctGuess();
       TextToSpeech.speak("Correct! You won! This is the " + clickedProfession);
     } else {
+      roomController.incorrectGuess();
       TextToSpeech.speak("You lost! This is the " + clickedProfession);
     }
     context.setState(context.getGameOverState());

@@ -34,7 +34,7 @@ public class GameStateContext {
   public GameStateContext(RoomController roomController) {
     gameStartedState = new GameStarted(this, roomController);
     guessingState = new Guessing(this, roomController);
-    gameOverState = new GameOver(this);
+    gameOverState = new GameOver(this, roomController);
 
     gameState = gameStartedState; // Initial state
     Map<String, Object> obj = null;

@@ -8,6 +8,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -19,6 +20,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
@@ -40,6 +42,9 @@ import nz.ac.auckland.se206.speech.TextToSpeech;
 public class RoomController {
 
   private static boolean isFirstTimeInit = true;
+
+  @FXML private Pane headerPane;
+  @FXML private Label lblHeader;
 
   @FXML private ImageView imageKid;
   @FXML private ImageView imageGrandma;
@@ -223,6 +228,9 @@ public class RoomController {
       stopTimer();
       timerRanOut = true;
       tenSecondsPlayer.play();
+      lblHeader.setText("You have 10 seconds remaining! Click on the thief.");
+      lblHeader.setAlignment(Pos.CENTER);
+      headerPane.setStyle("-fx-background-color: #f2c46f;");
       startCountdownTimer(11);
       stateIsGameStarted = false;
     }
@@ -586,6 +594,7 @@ public class RoomController {
 
   private void timeOut() {
     ranOutPlayer.play();
+    incorrectGuess();
     context.setState(context.getGameOverState());
   }
 
@@ -687,5 +696,17 @@ public class RoomController {
   private void onCloseClue() {
     cluePane.setVisible(false);
     txtaClue.clear();
+  }
+
+  public void correctGuess() {
+    lblHeader.setText("Game over! You correctly guessed the thief!");
+    lblHeader.setAlignment(Pos.CENTER);
+    headerPane.setStyle("-fx-background-color: #5bf08a;");
+  }
+
+  public void incorrectGuess() {
+    lblHeader.setText("Game over! You did not guess the thief correctly.");
+    lblHeader.setAlignment(Pos.CENTER);
+    headerPane.setStyle("-fx-background-color: #f0795b;");
   }
 }

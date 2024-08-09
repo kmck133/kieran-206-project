@@ -14,7 +14,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<Pane fx:id="room" focusTraversable="true" onKeyPressed="#onKeyPressed" onKeyReleased="#onKeyReleased" prefHeight="623.0" prefWidth="664.0" style="-fx-background-color: #A9A9A9;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nz.ac.auckland.se206.controllers.RoomController">
+<Pane fx:id="headerPane" focusTraversable="true" onKeyPressed="#onKeyPressed" onKeyReleased="#onKeyReleased" prefHeight="623.0" prefWidth="664.0" style="-fx-background-color: #5196a6;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nz.ac.auckland.se206.controllers.RoomController">
    <children>
       <ImageView fitHeight="488.0" fitWidth="689.0" layoutX="-1.0" layoutY="135.0" preserveRatio="true">
          <image>
@@ -105,18 +105,13 @@
       <Rectangle fx:id="rectGrandma" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="263.0" layoutX="214.0" layoutY="319.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="99.0" />
       <Rectangle fx:id="rectCashier" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="74.0" layoutX="295.0" layoutY="243.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
       <Rectangle fx:id="rectKid" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" focusTraversable="true" height="211.0" layoutX="512.0" layoutY="370.0" onMouseClicked="#handleRectangleClick" onMouseEntered="#suspectGlow" onMouseExited="#suspectUnglow" opacity="0.0" stroke="BLACK" strokeType="INSIDE" width="72.0" />
-      <Label layoutX="96.0" layoutY="14.0" text="SOFTENG206 - Guess Who ?">
-         <font>
-            <Font size="38.0" />
-         </font>
-      </Label>
-      <Button fx:id="btnGuess" layoutX="289.0" layoutY="99.0" mnemonicParsing="false" onAction="#handleGuessClick" text="Make a Guess" />
-      <Label layoutX="47.0" layoutY="62.0" text="Talk to the three suspects and figure out who stole the (thing)">
+      <Button fx:id="btnGuess" layoutX="574.0" layoutY="109.0" mnemonicParsing="false" onAction="#handleGuessClick" text="Make a Guess" />
+      <Label fx:id="lblHeader" alignment="CENTER" contentDisplay="CENTER" layoutX="73.0" layoutY="62.0" text="A pair of headphones has been stolen! Identify the thief." textAlignment="CENTER">
          <font>
             <Font size="21.0" />
          </font>
       </Label>
-      <Label fx:id="timerLabel" layoutX="595.0" layoutY="22.0" prefHeight="39.0" prefWidth="48.0" text="120">
+      <Label fx:id="timerLabel" layoutX="406.0" layoutY="23.0" prefHeight="39.0" prefWidth="48.0" text="120">
          <font>
             <Font size="27.0" />
          </font>
@@ -127,5 +122,10 @@
             <Button fx:id="btnBackClue" layoutX="586.0" layoutY="114.0" minHeight="29.0" mnemonicParsing="false" onAction="#onCloseClue" prefHeight="37.0" prefWidth="72.0" text="Go Back" />
          </children>
       </AnchorPane>
+      <Label fx:id="timerLabel1" layoutX="202.0" layoutY="23.0" prefHeight="39.0" prefWidth="202.0" text="Time Remaining:">
+         <font>
+            <Font size="27.0" />
+         </font>
+      </Label>
    </children>
 </Pane>
